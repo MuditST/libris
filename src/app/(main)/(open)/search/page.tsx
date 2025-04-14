@@ -1,0 +1,261 @@
+"use client";
+
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
+import { Search as SearchIcon, Loader2 } from "lucide-react";
+import BookCard from "@/components/BookCard";
+import BookModal from "@/components/BookModal";
+import { BookItem } from "@/lib/types";
+import { useSearchBooks } from "@/hooks/useSearchBooks";
+import LoadingIndicator from "@/components/LoadingIndicator";
+import { cn } from "@/lib/utils"; // Import cn
+import { Button } from "@/components/ui/button"; // Import Button
+
+const SearchPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+
+  const [query, setQuery] = useState(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+  const [selectedBook, setSelectedBook] = useState<BookItem | null>(null);
+
+  // Create search hook
+  const { books, loading, loadMore, loadingMore, hasMore, error } =
+    useSearchBooks(debouncedQuery);
+
+  // Fixed debounce handling in the search page
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only update if the query actually changed
+      if (debouncedQuery !== query.trim()) {
+        console.log(`Debouncing from "${debouncedQuery}" to "${query.trim()}"`);
+
+        // Update the debounced query which will trigger the search
+        setDebouncedQuery(query.trim());
+
+        // Update URL without page reload if query isn't empty
+        if (query.trim()) {
+          router.push(`/search?q=${encodeURIComponent(query.trim())}`, {
+            scroll: false,
+          });
+        } else if (initialQuery) {
+          router.push("/search", { scroll: false });
+        }
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query, router, initialQuery, debouncedQuery]);
+
+  // Book selection
+  const handleBookClick = (book: BookItem) => {
+    setSelectedBook(book);
+    // Update URL without page reload
+    window.history.pushState(null, "", `/book/${book.id}`);
+  };
+
+  // Update handleCloseModal to focus back on the search input
+  const handleCloseModal = useCallback(() => {
+    setSelectedBook(null);
+    // Restore URL to search query
+    const queryParam = query ? `?q=${encodeURIComponent(query)}` : "";
+    window.history.pushState(null, "", `/search${queryParam}`);
+
+    // After modal closes, focus back on search input
+    setTimeout(() => {
+      document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+    }, 0);
+  }, [query]);
+
+  // Handle Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedBook) {
+        handleCloseModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedBook, handleCloseModal]);
+
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = () => {
+      if (!window.location.pathname.includes("/book/")) {
+        setSelectedBook(null);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Handle load more
+  const handleLoadMore = () => {
+    if (!loadingMore && hasMore) {
+      loadMore();
+    }
+  };
+
+  // Update the input handling to append a space for single-word queries
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      {/* Search input */}
+      <div className="mb-8">
+        <div className="relative">
+          <input
+            type="text"
+            value={query}
+            onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                // Force immediate search
+                setDebouncedQuery(query.trim());
+
+                // Update URL
+                if (query.trim()) {
+                  router.push(`/search?q=${encodeURIComponent(query.trim())}`, {
+                    scroll: false,
+                  });
+                }
+              }
+            }}
+            placeholder="Search books..."
+            className={cn(
+              "w-full px-4 py-3 pr-12 rounded-md", // Added rounded-md
+              "font-mono text-base", // Keep font-mono, ensure text size
+              "bg-background text-foreground", // Theme background and text
+              "border border-input", // Theme border
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:border-primary", // Theme focus
+              "placeholder:text-muted-foreground" // Theme placeholder
+            )}
+            autoFocus
+          />
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+            {query && (
+              <button
+                onClick={() => setQuery("")}
+                className="mr-2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear search"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            )}
+            {loading ? (
+              <Loader2 size={20} className="animate-spin text-gray-400" />
+            ) : (
+              <SearchIcon size={20} className="text-gray-400" />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Results count */}
+      {debouncedQuery && books.length > 0 && (
+        <div className="mb-6 text-center text-sm font-mono opacity-70">
+          <p>
+            {books.length} {books.length === 1 ? "result" : "results"} found
+          </p>
+        </div>
+      )}
+
+      {/* Loading state */}
+      {loading && !loadingMore && (
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <LoadingIndicator text="Searching" />
+        </div>
+      )}
+
+      {/* Error state */}
+      {error && (
+        <div className="bg-red-50 text-red-700 p-4 rounded-lg">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && debouncedQuery && books.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No books found for "{debouncedQuery}"</p>
+        </div>
+      )}
+
+      {/* Initial state */}
+      {!loading && !debouncedQuery && (
+        <div className="text-center py-12">
+          <p className="text-gray-500">Enter a search term to find books</p>
+        </div>
+      )}
+
+      {/* Results grid */}
+      {books.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-10">
+          {books.map((book) => (
+            <BookCard key={book.id} book={book} onClick={handleBookClick} />
+          ))}
+        </div>
+      )}
+
+      {/* Load more button */}
+      {books.length > 0 && debouncedQuery && (
+        <div className="flex justify-center mt-12 mb-8">
+          <Button
+            variant="outline" // Use outline variant
+            onClick={handleLoadMore}
+            disabled={loadingMore || !hasMore}
+            // Apply theme colors
+            className={cn(
+              "px-8 py-3 uppercase tracking-wide font-sans", // Use font-sans
+              "border-primary text-primary", // Theme border/text
+              "hover:bg-primary hover:text-primary-foreground", // Theme hover
+              "disabled:opacity-50 disabled:cursor-not-allowed", // Disabled state
+              loadingMore && "cursor-not-allowed" // Explicit loading cursor
+            )}
+          >
+            {loadingMore ? (
+              <LoadingIndicator text="Loading more" className="text-sm" />
+            ) : hasMore ? (
+              "Load More"
+            ) : (
+              "No More Results"
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* Book modal */}
+      <AnimatePresence>
+        {selectedBook && (
+          <BookModal
+            book={selectedBook}
+            isOpen={!!selectedBook}
+            onClose={handleCloseModal}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default SearchPage;
