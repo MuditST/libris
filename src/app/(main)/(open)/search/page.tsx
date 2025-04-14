@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react"; // Import Suspense
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { Search as SearchIcon, Loader2 } from "lucide-react";
@@ -9,12 +9,13 @@ import BookModal from "@/components/BookModal";
 import { BookItem } from "@/lib/types";
 import { useSearchBooks } from "@/hooks/useSearchBooks";
 import LoadingIndicator from "@/components/LoadingIndicator";
-import { cn } from "@/lib/utils"; // Import cn
-import { Button } from "@/components/ui/button"; // Import Button
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-const SearchPage = () => {
+// New component to contain logic depending on searchParams
+function SearchContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // useSearchParams is now inside this component
   const initialQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(initialQuery);
@@ -28,14 +29,9 @@ const SearchPage = () => {
   // Fixed debounce handling in the search page
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Only update if the query actually changed
       if (debouncedQuery !== query.trim()) {
         console.log(`Debouncing from "${debouncedQuery}" to "${query.trim()}"`);
-
-        // Update the debounced query which will trigger the search
         setDebouncedQuery(query.trim());
-
-        // Update URL without page reload if query isn't empty
         if (query.trim()) {
           router.push(`/search?q=${encodeURIComponent(query.trim())}`, {
             scroll: false,
@@ -45,25 +41,20 @@ const SearchPage = () => {
         }
       }
     }, 300);
-
     return () => clearTimeout(timer);
   }, [query, router, initialQuery, debouncedQuery]);
 
   // Book selection
   const handleBookClick = (book: BookItem) => {
     setSelectedBook(book);
-    // Update URL without page reload
     window.history.pushState(null, "", `/book/${book.id}`);
   };
 
   // Update handleCloseModal to focus back on the search input
   const handleCloseModal = useCallback(() => {
     setSelectedBook(null);
-    // Restore URL to search query
     const queryParam = query ? `?q=${encodeURIComponent(query)}` : "";
     window.history.pushState(null, "", `/search${queryParam}`);
-
-    // After modal closes, focus back on search input
     setTimeout(() => {
       document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
     }, 0);
@@ -76,7 +67,6 @@ const SearchPage = () => {
         handleCloseModal();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedBook, handleCloseModal]);
@@ -88,7 +78,6 @@ const SearchPage = () => {
         setSelectedBook(null);
       }
     };
-
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
@@ -100,14 +89,14 @@ const SearchPage = () => {
     }
   };
 
-  // Update the input handling to append a space for single-word queries
+  // Update the input handling
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <>
       {/* Search input */}
       <div className="mb-8">
         <div className="relative">
@@ -117,10 +106,7 @@ const SearchPage = () => {
             onChange={handleInputChange}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                // Force immediate search
                 setDebouncedQuery(query.trim());
-
-                // Update URL
                 if (query.trim()) {
                   router.push(`/search?q=${encodeURIComponent(query.trim())}`, {
                     scroll: false,
@@ -130,12 +116,12 @@ const SearchPage = () => {
             }}
             placeholder="Search books..."
             className={cn(
-              "w-full px-4 py-3 pr-12 rounded-md", // Added rounded-md
-              "font-mono text-base", // Keep font-mono, ensure text size
-              "bg-background text-foreground", // Theme background and text
-              "border border-input", // Theme border
-              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:border-primary", // Theme focus
-              "placeholder:text-muted-foreground" // Theme placeholder
+              "w-full px-4 py-3 pr-12 rounded-md",
+              "font-mono text-base",
+              "bg-background text-foreground",
+              "border border-input",
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:border-primary",
+              "placeholder:text-muted-foreground"
             )}
             autoFocus
           />
@@ -197,7 +183,10 @@ const SearchPage = () => {
       {/* Empty state */}
       {!loading && debouncedQuery && books.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No books found for "{debouncedQuery}"</p>
+          <p className="text-gray-500">
+            No books found for &quot;{debouncedQuery}&quot;
+          </p>{" "}
+          {/* Escaped quotes */}
         </div>
       )}
 
@@ -221,16 +210,15 @@ const SearchPage = () => {
       {books.length > 0 && debouncedQuery && (
         <div className="flex justify-center mt-12 mb-8">
           <Button
-            variant="outline" // Use outline variant
+            variant="outline"
             onClick={handleLoadMore}
             disabled={loadingMore || !hasMore}
-            // Apply theme colors
             className={cn(
-              "px-8 py-3 uppercase tracking-wide font-sans", // Use font-sans
-              "border-primary text-primary", // Theme border/text
-              "hover:bg-primary hover:text-primary-foreground", // Theme hover
-              "disabled:opacity-50 disabled:cursor-not-allowed", // Disabled state
-              loadingMore && "cursor-not-allowed" // Explicit loading cursor
+              "px-8 py-3 uppercase tracking-wide font-sans",
+              "border-primary text-primary",
+              "hover:bg-primary hover:text-primary-foreground",
+              "disabled:opacity-50 disabled:cursor-not-allowed",
+              loadingMore && "cursor-not-allowed"
             )}
           >
             {loadingMore ? (
@@ -254,6 +242,17 @@ const SearchPage = () => {
           />
         )}
       </AnimatePresence>
+    </>
+  );
+}
+
+// The main page component now wraps SearchContent in Suspense
+const SearchPage = () => {
+  return (
+    <div className="container mx-auto p-4">
+      <Suspense fallback={<LoadingIndicator text="Loading Search..." />}>
+        <SearchContent />
+      </Suspense>
     </div>
   );
 };
