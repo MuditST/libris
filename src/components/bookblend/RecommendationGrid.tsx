@@ -82,7 +82,7 @@ export default function RecommendationGrid() {
                 {/* Column 2: Reason */}
                 <div className="md:col-span-3 pt-2 md:pt-0">
                   <h3 className="font-sans font-semibold text-foreground mb-2">
-                    Why you might like this:
+                    Why you might like this?
                   </h3>
                   <p className="text-sm md:px-0 font-sans text-muted-foreground italic leading-relaxed">
                     "{book.reason || "Based on your selections"}"

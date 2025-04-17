@@ -108,7 +108,7 @@ export async function POST(req: Request) {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            "model": process.env.OPENROUTER_MODEL || "google/gemini-pro", // Use gemini-pro, not gemini-1.5-pro
+            "model": process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-001", // Use gemini-pro, not gemini-1.5-pro
             "messages": apiMessages,
             "temperature": 0.7
           })

@@ -99,7 +99,7 @@ Ensure book titles and author names are spelled correctly for database lookups.`
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "google/gemini-pro", // Using Gemini Pro via OpenRouter
+          "model": "google/gemini-2.0-flash-001", // Using Gemini Pro via OpenRouter
           "messages": [
             {
               "role": "user",

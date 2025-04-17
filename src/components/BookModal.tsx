@@ -4,20 +4,12 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { X, BookIcon, Heart, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { BookItem } from "@/lib/types";
 import { SHELF_IDS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { useBookshelfStore } from "@/store/bookshelfStore";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -211,176 +203,202 @@ export default function BookModal({ book, isOpen, onClose }: BookModalProps) {
   if (!isOpen) return null;
 
   const hasDescription = !!book.volumeInfo.description;
-  const descriptionId = React.useId();
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+    exit: { opacity: 0 },
+  };
+
+  const panelVariants = {
+    hidden: { scale: 0.95, opacity: 0 },
+    visible: { scale: 1, opacity: 1 },
+    exit: { scale: 0.95, opacity: 0 },
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent
-        className={cn(
-          "fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 md:p-12",
-          "translate-x-0 translate-y-0",
-          "data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100",
-          "data-[state=closed]:slide-out-to-left-0 data-[state=closed]:slide-out-to-top-0",
-          "data-[state=open]:slide-in-from-left-0 data-[state=open]:slide-in-from-top-0",
-          "w-auto max-w-none border-none bg-transparent p-0 shadow-none"
-        )}
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        aria-describedby={hasDescription ? descriptionId : undefined}
-      >
-        <DialogTitle className="sr-only">{book.volumeInfo.title}</DialogTitle>
-        {hasDescription && (
-          <DialogDescription id={descriptionId} className="sr-only">
-            {book.volumeInfo.description?.replace(/<[^>]*>?/gm, "") ||
-              "Book details"}
-          </DialogDescription>
-        )}
-
-        <div className="relative grid w-full max-w-6xl h-full max-h-[90vh] grid-cols-1 md:grid-cols-3 gap-0 overflow-hidden rounded-lg border bg-card shadow-xl">
-          <DialogClose
-            className="absolute top-3 right-4 z-20 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
-            aria-label="Close"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-8 md:p-12"
+          onClick={handleOverlayClick}
+        >
+          <motion.div
+            variants={panelVariants}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="relative grid w-full max-w-6xl h-full max-h-[90vh] grid-cols-1 md:grid-cols-3 gap-0 overflow-hidden rounded-lg border bg-card shadow-xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            <X className="h-5 w-5" />
-          </DialogClose>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="absolute top-3 right-4 z-20 rounded-sm opacity-70 hover:opacity-100 h-8 w-8 text-muted-foreground"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </Button>
 
-          <div className="relative flex flex-col items-center justify-center border-b md:border-b-0 md:border-r p-6 sm:p-8 bg-muted/30">
-            <div className="relative aspect-[2/3] w-full max-w-[180px] sm:max-w-[220px] rounded overflow-hidden shadow-md bg-muted mb-4">
-              {book.volumeInfo.imageLinks?.thumbnail ? (
-                <Image
-                  src={book.volumeInfo.imageLinks.thumbnail.replace(
-                    "http:",
-                    "https:"
-                  )}
-                  alt={book.volumeInfo.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <BookIcon size={48} className="text-muted-foreground/70" />
-                </div>
-              )}
-            </div>
-            <div className="text-center md:hidden mt-2">
-              <h2 className="text-lg font-semibold font-sans line-clamp-2">
-                {book.volumeInfo.title}
-              </h2>
-              {book.volumeInfo.authors && (
-                <p className="text-sm text-muted-foreground font-mono line-clamp-1">
-                  {book.volumeInfo.authors.join(", ")}
-                </p>
-              )}
-            </div>
-          </div>
+            <h2 id="book-modal-title" className="sr-only">
+              {book.volumeInfo.title}
+            </h2>
+            {hasDescription && (
+              <p id="book-modal-desc" className="sr-only">
+                {book.volumeInfo.description?.replace(/<[^>]*>?/gm, "") ||
+                  "Book details"}
+              </p>
+            )}
 
-          <div className="col-span-1 md:col-span-2 flex flex-col overflow-hidden p-6 sm:p-8 md:pr-12 lg:pr-16">
-            <div className="flex-shrink-0 pb-4 mb-4 md:border-b">
-              <div className="flex justify-between items-start gap-4">
-                <div className="hidden md:block">
-                  <h2 className="text-xl font-semibold font-sans leading-tight">
-                    {book.volumeInfo.title}
-                  </h2>
-                  {book.volumeInfo.authors && (
-                    <p className="text-sm text-muted-foreground font-mono mt-1">
-                      {book.volumeInfo.authors.join(", ")}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  variant={localState.isFavorite ? "destructive" : "outline"}
-                  size="icon"
-                  onClick={handleToggleFavorite}
-                  disabled={isAnyActionLoading}
-                  className="flex-shrink-0"
-                  aria-label={
-                    localState.isFavorite ? "Remove favorite" : "Add favorite"
-                  }
-                >
-                  {actionStates.favoriteLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Heart
-                      className={cn(
-                        "h-4 w-4",
-                        localState.isFavorite && "fill-current"
-                      )}
-                    />
-                  )}
-                </Button>
+            <div className="relative flex flex-col items-center justify-center border-b md:border-b-0 md:border-r p-6 sm:p-8 bg-muted/30">
+              <div className="relative aspect-[2/3] w-full max-w-[180px] sm:max-w-[220px] rounded overflow-hidden shadow-md bg-muted mb-4">
+                {book.volumeInfo.imageLinks?.thumbnail ? (
+                  <Image
+                    src={book.volumeInfo.imageLinks.thumbnail.replace(
+                      "http:",
+                      "https:"
+                    )}
+                    alt={book.volumeInfo.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <BookIcon size={48} className="text-muted-foreground/70" />
+                  </div>
+                )}
+              </div>
+              <div className="text-center md:hidden mt-2">
+                <h2 className="text-lg font-semibold font-sans line-clamp-2">
+                  {book.volumeInfo.title}
+                </h2>
+                {book.volumeInfo.authors && (
+                  <p className="text-sm text-muted-foreground font-mono line-clamp-1">
+                    {book.volumeInfo.authors.join(", ")}
+                  </p>
+                )}
               </div>
             </div>
 
-            <ScrollArea className="flex-grow min-h-0 mb-6 pr-3 -mr-3">
-              <h3 className="text-sm font-semibold font-sans uppercase tracking-wide text-muted-foreground mb-2">
-                Description
-              </h3>
-              {hasDescription ? (
-                <div
-                  className="text-sm text-foreground/90 leading-relaxed font-sans prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{
-                    __html: book.volumeInfo.description || "",
-                  }}
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground italic font-sans">
-                  No description available.
-                </p>
-              )}
-            </ScrollArea>
-
-            <div className="flex-shrink-0 pt-6 md:border-t space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {(
-                  ["WILL_READ", "READING", "HAVE_READ"] as Extract<
-                    BookshelfCategory,
-                    "WILL_READ" | "READING" | "HAVE_READ"
-                  >[]
-                ).map((shelf) => {
-                  const isLoading =
-                    actionStates[
-                      `${shelf.toLowerCase()}Loading` as keyof typeof actionStates
-                    ];
-                  const isActive = localState.currentShelf === shelf;
-                  return (
-                    <Button
-                      key={shelf}
-                      variant={isActive ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleAddToShelf(shelf)}
-                      disabled={isAnyActionLoading}
-                      className="flex-1 min-w-[100px]"
-                    >
-                      {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        getCategoryDisplayName(shelf)
-                      )}
-                    </Button>
-                  );
-                })}
+            <div className="col-span-1 md:col-span-2 flex flex-col overflow-hidden p-6 sm:p-8 md:pr-12 lg:pr-16">
+              <div className="flex-shrink-0 pb-4 mb-4 md:border-b">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="hidden md:block">
+                    <h2 className="text-xl font-semibold font-sans leading-tight">
+                      {book.volumeInfo.title}
+                    </h2>
+                    {book.volumeInfo.authors && (
+                      <p className="text-sm text-muted-foreground font-mono mt-1">
+                        {book.volumeInfo.authors.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    variant={localState.isFavorite ? "destructive" : "outline"}
+                    size="icon"
+                    onClick={handleToggleFavorite}
+                    disabled={isAnyActionLoading}
+                    className="flex-shrink-0"
+                    aria-label={
+                      localState.isFavorite ? "Remove favorite" : "Add favorite"
+                    }
+                  >
+                    {actionStates.favoriteLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Heart
+                        className={cn(
+                          "h-4 w-4",
+                          localState.isFavorite && "fill-current"
+                        )}
+                      />
+                    )}
+                  </Button>
+                </div>
               </div>
-              {localState.currentShelf && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRemoveFromShelf}
-                  disabled={isAnyActionLoading}
-                  className="w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  {actionStates.removeLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <Trash2 size={14} className="mr-2" /> Remove from Shelf
-                    </>
-                  )}
-                </Button>
-              )}
+
+              <ScrollArea className="flex-grow min-h-0 mb-6 pr-3 -mr-3">
+                <h3 className="text-sm font-semibold font-sans uppercase tracking-wide text-muted-foreground mb-2">
+                  Description
+                </h3>
+                {hasDescription ? (
+                  <div
+                    className="text-sm text-foreground/90 leading-relaxed font-sans prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: book.volumeInfo.description || "",
+                    }}
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground italic font-sans">
+                    No description available.
+                  </p>
+                )}
+              </ScrollArea>
+
+              <div className="flex-shrink-0 pt-6 md:border-t space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {(
+                    ["WILL_READ", "READING", "HAVE_READ"] as Extract<
+                      BookshelfCategory,
+                      "WILL_READ" | "READING" | "HAVE_READ"
+                    >[]
+                  ).map((shelf) => {
+                    const isLoading =
+                      actionStates[
+                        `${shelf.toLowerCase()}Loading` as keyof typeof actionStates
+                      ];
+                    const isActive = localState.currentShelf === shelf;
+                    return (
+                      <Button
+                        key={shelf}
+                        variant={isActive ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleAddToShelf(shelf)}
+                        disabled={isAnyActionLoading}
+                        className="flex-1 min-w-[100px]"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          getCategoryDisplayName(shelf)
+                        )}
+                      </Button>
+                    );
+                  })}
+                </div>
+                {localState.currentShelf && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRemoveFromShelf}
+                    disabled={isAnyActionLoading}
+                    className="w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    {actionStates.removeLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Trash2 size={14} className="mr-2" /> Remove from Shelf
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
