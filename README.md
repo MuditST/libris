@@ -53,19 +53,19 @@ To run Libris locally, follow these steps:
    - Create a `.env.local` file in the root of the project.
    - Add the following environment variables
      ```bash
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+      CLERK_SECRET_KEY=
 
+      NEXT_PUBLIC_CLERK_SIGN_IN_URL=
+      NEXT_PUBLIC_CLERK_SIGN_UP_URL=
+
+      GOOGLE_BOOKS_API_KEY=
+
+      OPENROUTER_API_KEY=
      ```
 
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
 
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=
 
-GOOGLE_BOOKS_API_KEY=
-
-OPENROUTER_API_KEY=
-```
 
 4. Run the development server:
 
