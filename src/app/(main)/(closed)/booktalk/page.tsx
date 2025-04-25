@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useBookshelfStore } from "@/store/bookshelfStore";
 import BookSelector from "@/components/BookSelector";
-import ChatModal from "@/components/gookit/ChatModal";
+import ChatModal from "@/components/booktalk/ChatModal";
 import { BookItem } from "@/lib/types";
 import { BookOpen, Sparkles } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
-export default function GookitPage() {
+export default function BookTalkPage() {
   const router = useRouter();
   const {
     favorites,
@@ -66,7 +66,7 @@ export default function GookitPage() {
           <CardHeader>
             <CardTitle className="text-center font-sans flex flex-col items-center gap-2">
               <Sparkles className="w-6 h-6 text-primary" />
-              Gook It!
+              Book Talk!
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
@@ -90,7 +90,7 @@ export default function GookitPage() {
       {/* Page header */}
       <div className="mb-8">
         <h1 className="text-2xl font-sans uppercase tracking-tight text-foreground">
-          Gook It!
+          Book Talk!
         </h1>
         <p className="text-sm font-sans text-muted-foreground mt-1">
           Select a book from your shelves to start a conversation with AI.

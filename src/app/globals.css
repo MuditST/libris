@@ -110,7 +110,7 @@
   }
 }
 
-/* Add these classes for animation delays */
+
 .animation-delay-200 {
   animation-delay: 100ms;
 }
@@ -119,7 +119,7 @@
   animation-delay: 200ms;
 }
 
-/* Fade animation for loader */
+
 @keyframes fadeInOut {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }

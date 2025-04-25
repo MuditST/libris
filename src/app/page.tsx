@@ -56,7 +56,7 @@ export default function LandingPage() {
           <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-xl font-semibold tracking-tight font-sans">
-                Gooks
+                Libris
               </span>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
@@ -111,7 +111,7 @@ export default function LandingPage() {
 
         <main className="flex-1">
           {/* Section 1 */}
-          <section className="relative overflow-hidden py-20 md:py-32 lg:py-40 bg-gradient-to-b from-background to-muted/20">
+          <section className="relative overflow-hidden py-20  bg-gradient-to-b from-background to-muted/20">
             {/* Container centers the section content */}
             <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
               <div className="grid gap-12 md:grid-cols-2 items-center">
@@ -168,7 +168,7 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-                {/* Card 1: Want to Read (Simplified) */}
+                {/* Card 1: Want to Read  */}
                 <Card className="bg-card border-border/60 hover:shadow-lg transition-shadow">
                   <CardHeader className="text-center">
                     <Bookmark className="mx-auto h-8 w-8 text-primary mb-4" />
@@ -183,7 +183,7 @@ export default function LandingPage() {
                   </CardContent>
                 </Card>
 
-                {/* Card 2: Currently Reading (Simplified) */}
+                {/* Card 2: Currently Reading  */}
                 <Card className="bg-card border-border/60 hover:shadow-lg transition-shadow">
                   <CardHeader className="text-center">
                     <BookOpen className="mx-auto h-8 w-8 text-primary mb-4" />
@@ -198,7 +198,7 @@ export default function LandingPage() {
                   </CardContent>
                 </Card>
 
-                {/* Card 3: Finished (Simplified) */}
+                {/* Card 3: Finished */}
                 <Card className="bg-card border-border/60 hover:shadow-lg transition-shadow">
                   <CardHeader className="text-center">
                     <BookCheck className="mx-auto h-8 w-8 text-primary mb-4" />
@@ -213,7 +213,7 @@ export default function LandingPage() {
                   </CardContent>
                 </Card>
 
-                {/* Card 4: Favorites (Simplified) */}
+                {/* Card 4: Favorites*/}
                 <Card className="bg-card border-border/60 hover:shadow-lg transition-shadow">
                   <CardHeader className="text-center">
                     <Heart className="mx-auto h-8 w-8 text-primary mb-4" />
@@ -284,13 +284,13 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="grid md:grid-cols-2 gap-8">
-                {/* Gook It Card */}
+                {/* Book Talk Card */}
                 <Card className="bg-card/95 backdrop-blur-sm border-border/60 overflow-hidden hover:shadow-lg transition-shadow">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3 mb-2">
                       <MessageSquare className="h-6 w-6 text-primary" />
                       <CardTitle className="font-sans text-xl">
-                        Gook It!
+                        Book Talk!
                       </CardTitle>
                     </div>
                     <CardDescription className="font-sans text-base">
@@ -304,7 +304,7 @@ export default function LandingPage() {
                       get insightful answers from our AI assistant.
                     </p>
                     <Button variant="link" className="p-0 h-auto" asChild>
-                      <Link href="/gookit">Try Gook It →</Link>
+                      <Link href="/booktalk">Try Libris It →</Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -340,15 +340,16 @@ export default function LandingPage() {
             {/* Container centers the section content */}
             <div className="container px-4 sm:px-6 lg:px-8 text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4 font-sans text-foreground">
-                About Gooks
+                About Libris
               </h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto font-sans">
-                Gooks started as a passion project to create the perfect digital
-                bookshelf—a place to not only track reading but to rediscover
-                the joy of books through smart organization and discovery tools.
+                Libris started as a passion project to create the perfect
+                digital bookshelf—a place to not only track reading but to
+                rediscover the joy of books through smart organization and
+                discovery tools.
               </p>
               <blockquote className="mt-10 italic text-muted-foreground font-sans border-l-4 border-primary pl-4 max-w-xl mx-auto text-left">
-                "Some books change your life. Gooks helps you remember every
+                "Some books change your life. Libris helps you remember every
                 one."
               </blockquote>
             </div>
@@ -358,7 +359,7 @@ export default function LandingPage() {
         <footer className="py-8 border-t border-border/40 bg-background">
           {/* Container centers the footer content */}
           <div className="container px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground font-sans">
-            © {new Date().getFullYear()} Gooks. All rights reserved. Built with
+            © {new Date().getFullYear()} Libris. All rights reserved. Built with
             passion.
           </div>
         </footer>

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { z } from 'zod';
 
-// Schema validation for the request body
+
 const requestSchema = z.object({
   messages: z.array(
     z.object({
@@ -22,13 +22,13 @@ const requestSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    // Verify user is authenticated
+   
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if OpenRouter API key is configured
+ 
     const openRouterKey = process.env.OPENROUTER_API_KEY;
     if (!openRouterKey) {
       console.error("OpenRouter API key not configured");
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
     
-    // Validate the request body
+   
     const result = requestSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     
     const { messages, book } = result.data;
     
-    // Create system prompt with book details
+    
     const bookDetails = `
       Title: ${book.title}
       Author(s): ${book.authors.join(', ')}
@@ -60,10 +60,10 @@ export async function POST(req: Request) {
       ${book.description ? `Description: ${book.description}` : ''}
     `;
     
-    // Update the system prompt for a librarian persona
+  
     const systemMessage = {
       role: "system",
-      content: `You are an AI librarian assistant for the Gooks app, knowledgeable and helpful. You are discussing the book "${book.title}" by ${book.authors.join(', ')} with a user.
+      content: `You are an AI librarian assistant for the Libris app, knowledgeable and helpful. You are discussing the book "${book.title}" by ${book.authors.join(', ')} with a user.
 
       Book Details:
       ${bookDetails}
@@ -82,33 +82,31 @@ export async function POST(req: Request) {
       Engage with the user's questions about "${book.title}".`
     };
 
-    // Prepare the messages for the API
+
     const apiMessages = [
       systemMessage,
-      ...messages // User messages follow the system prompt
+      ...messages 
     ];
 
-    // Maximum number of retry attempts
+    
     const maxRetries = 3;
     let currentRetry = 0;
     let lastError = null;
 
-    // Retry loop for better reliability
     while (currentRetry < maxRetries) {
       try {
-        console.log(`API attempt ${currentRetry + 1} of ${maxRetries}`);
+       
         
-        // Use OpenRouter to access Gemini Pro
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${openRouterKey}`,
-            "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://gooks.app",
-            "X-Title": "Gooks - Gook It!",
+            "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL,
+            "X-Title": "Libris - Book Talk!",
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            "model": process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-001", // Use gemini-pro, not gemini-1.5-pro
+            "model": process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-001", 
             "messages": apiMessages,
             "temperature": 0.7
           })
@@ -132,7 +130,7 @@ export async function POST(req: Request) {
         
         const aiResponse = openRouterData.choices[0].message.content;
         
-        // Success! Return the response
+      
         return NextResponse.json({ response: aiResponse });
         
       } catch (error) {
@@ -140,23 +138,20 @@ export async function POST(req: Request) {
         lastError = error;
         currentRetry++;
         
-        // If not the last attempt, wait before retrying
         if (currentRetry < maxRetries) {
-          const delay = 1000 * Math.pow(2, currentRetry - 1); // Exponential backoff
-          console.log(`Retrying in ${delay}ms...`);
+          const delay = 1000 * Math.pow(2, currentRetry - 1); 
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
     }
 
-    // If we get here, all retries failed
     console.error('All retry attempts failed');
     return NextResponse.json(
       { error: 'Our AI is having trouble right now. Please try again later.' },
       { status: 500 }
     );
   } catch (error) {
-    console.error('Error in Gook It API:', error);
+    console.error('Error in Book Talk API:', error);
     return NextResponse.json(
       { error: 'Failed to process your request. Please try again later.' },
       { status: 500 }

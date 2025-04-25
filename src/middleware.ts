@@ -1,13 +1,13 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher([ '/bookshelf(.*)',     // Bookshelf route and all subroutes
-  '/favorites(.*)',     // Favorites route
-  '/willread(.*)',      // Will Read route
-  '/reading(.*)',       // Reading route
-  '/finished(.*)',      // Finished route
+const isProtectedRoute = createRouteMatcher([ '/bookshelf(.*)',     
+  '/favorites(.*)',   
+  '/willread(.*)',     
+  '/reading(.*)',       
+  '/finished(.*)',      
   
-  '/bookblend(.*)',     // AI Suggested books route
-  '/gookit(.*)',])
+  '/bookblend(.*)',     
+  '/booktalk(.*)',])
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) await auth.protect()

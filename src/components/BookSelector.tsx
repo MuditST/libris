@@ -22,7 +22,7 @@ export default function BookSelector({
   onBookSelect,
   showSelectionCount = true,
   maxSelections = 5,
-  headerText, // Prop remains but won't be used for the main header
+  headerText, 
 }: BookSelectorProps) {
   const { wantToRead, reading, finished, favorites } = useBookshelfStore();
   const {
@@ -39,7 +39,7 @@ export default function BookSelector({
 
   useEffect(() => {
     if (!recommendations || recommendations.length === 0) {
-      // Nothing to do - we'll keep the selected books
+   
     }
   }, [recommendations]);
 

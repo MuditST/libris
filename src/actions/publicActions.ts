@@ -1,9 +1,8 @@
 "use server";
 
-// Use only one declaration of API key
+
 const GOOGLE_BOOKS_API_KEY = process.env.GOOGLE_BOOKS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
 
-// Track book IDs per search query to avoid duplicates
 const searchCache: Record<string, Set<string>> = {};
 export async function searchBooksServer(
   query: string, 
@@ -15,9 +14,9 @@ export async function searchBooksServer(
     throw new Error('Google Books API key is not configured');
   }
   
-  // Improve query handling
+
   const safeQuery = query.trim() ? query.trim() : "books";
-  console.log(`Server searching for: "${safeQuery}"`); // Debug log
+  
   
   // Initialize or reset the cache for this query if needed
   const cacheKey = safeQuery.toLowerCase();
@@ -25,20 +24,20 @@ export async function searchBooksServer(
     searchCache[cacheKey] = new Set();
   }
   
-  // Keep fetching until we get enough unique results or run out of results
+ 
   const uniqueItems: any[] = [];
   let currentIndex = startIndex;
   let totalItems = 0;
   let attempts = 0;
-  const maxAttempts = 5; // Limit API calls to avoid infinite loops
+  const maxAttempts = 5; 
   
   while (uniqueItems.length < maxResults && attempts < maxAttempts) {
     attempts++;
     
-    // Add a wildcard * to the end of single word queries to improve results
+   
     let queryParam = safeQuery;
     if (safeQuery.split(/\s+/).length === 1 && !safeQuery.includes('*')) {
-      // For single words, add both a trailing wildcard and intitle search for better results
+      
       queryParam = `intitle:${safeQuery} OR ${safeQuery}*`;
     }
     
@@ -126,10 +125,10 @@ export async function discoverBooks(
     }
     
     // For "newest" order, add a date parameter to ensure sorting works
-    const orderParams = orderBy === "newest" 
-      ? `&orderBy=newest&langRestrict=en`  // Add language restriction to improve newest sorting
-      : `&orderBy=${orderBy}`;
-    
+    const orderParams = orderBy === "newest"
+      ? `&orderBy=newest&langRestrict=en`
+      : `&orderBy=relevance`;
+
     // Log what we're fetching for debugging
     console.log(`Fetching with query:${queryString}, orderBy:${orderBy}, printType:${printType}, startIndex:${startIndex}, maxResults:${maxResults}`);
     
@@ -150,22 +149,7 @@ export async function discoverBooks(
     }
     
     const data = await response.json();
-    
-    // Add debug info for empty results
-    if (!data.items || data.items.length === 0) {
-      console.log(`No items found for query: ${queryString}, printType: ${printType}`);
-    } else {
-      console.log(`Found ${data.items.length} items of type ${printType}, orderBy: ${orderBy}`);
-      
-      // For debugging, log publication dates when ordering by newest
-      if (orderBy === "newest" && data.items && data.items.length > 0) {
-        console.log("Publication dates of first 3 items:");
-        for (let i = 0; i < Math.min(3, data.items.length); i++) {
-          const item = data.items[i];
-          console.log(`Book ${i+1}: ${item.volumeInfo?.title} - Published: ${item.volumeInfo?.publishedDate}`);
-        }
-      }
-    }
+
     
     // Calculate if there are more books to load
     const totalItems = data.totalItems || 0;
@@ -187,7 +171,7 @@ export async function getBookDetails(bookId: string): Promise<any> {
     throw new Error('Google Books API key is not configured');
   }
   
-  console.log(`Fetching details for book: ${bookId}`);
+  
   
   try {
     const response = await fetch(
@@ -206,4 +190,3 @@ export async function getBookDetails(bookId: string): Promise<any> {
   }
 }
 
-// Add your other public action functions here

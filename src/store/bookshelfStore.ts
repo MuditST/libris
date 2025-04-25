@@ -10,7 +10,7 @@ import {
   fetchAllBookshelves,
   loggedFetch
 } from '@/actions/bookshelfActions';
-import { AuthError } from '@/lib/errors'; // Import AuthError from the new location
+import { AuthError } from '@/lib/errors'; 
 import { SHELF_IDS } from "@/lib/constants";
 import { BookItem } from '@/lib/types';
 import { batchOperation } from '@/lib/apiBatchManager';
@@ -81,7 +81,7 @@ export interface BookshelfState {
   favoritesMap: { [key: string]: boolean };
   loading: boolean;
   error: string | null;
-  authError: boolean; // New state to track auth errors specifically
+  authError: boolean;
   lastUpdated: number | null;
   isInitialized: boolean;
   favorites: BookItem[];
@@ -102,7 +102,7 @@ export interface BookshelfState {
   isOnShelf: (bookId: string) => ReadingShelfCategory | null;
   isFavorite: (bookId: string) => boolean;
   clearError: () => void;
-  clearAuthError: () => void; // Action to clear the auth error state
+  clearAuthError: () => void;
   setInitialized: (value: boolean) => void;
   updateLocalBookshelves: (bookId: string, newCategory: BookshelfCategory | null, favorite: boolean, bookData?: BookItem) => void;
   clearStore: () => void;
@@ -115,7 +115,7 @@ export const useBookshelfStore = create<BookshelfState>()(
       favoritesMap: {},
       loading: false,
       error: null,
-      authError: false, // Initialize authError
+      authError: false,
       lastUpdated: null,
       isInitialized: false,
       favorites: [],
@@ -130,12 +130,12 @@ export const useBookshelfStore = create<BookshelfState>()(
       },
       
       refreshBookshelves: async () => {
-        set({ loading: true, error: null, authError: false }); // Reset authError on refresh
+        set({ loading: true, error: null, authError: false });
         try {
           const result = await batchOperation('refresh-all-bookshelves', async () => {
             const accessCheck = await checkGoogleBooksAccess();
             if (accessCheck.status !== 'success') {
-              throw new AuthError(accessCheck.message); // Throw AuthError if access fails
+              throw new AuthError(accessCheck.message); 
             }
             return await fetchAllBookshelves();
           });
@@ -181,7 +181,7 @@ export const useBookshelfStore = create<BookshelfState>()(
         } catch (err) {
           console.error("Error refreshing bookshelves:", err);
           if (err instanceof AuthError) {
-            set({ loading: false, error: err.message, authError: true }); // Set authError flag
+            set({ loading: false, error: err.message, authError: true });
           } else {
             set({ loading: false, error: err instanceof Error ? err.message : "An error occurred while loading your bookshelves" });
           }
@@ -192,7 +192,7 @@ export const useBookshelfStore = create<BookshelfState>()(
         const state = get();
         const currentCategory = state.isOnShelf(bookId);
         
-        set({ loading: !options?.localLoadingOnly, error: null, authError: false }); // Reset authError
+        set({ loading: !options?.localLoadingOnly, error: null, authError: false });
         try {
           if (options?.localLoadingOnly) {
             return;
@@ -208,7 +208,7 @@ export const useBookshelfStore = create<BookshelfState>()(
         } catch (error) {
           console.error('Error adding book to bookshelf:', error);
           if (error instanceof AuthError) {
-            set({ error: error.message, authError: true }); // Set authError flag
+            set({ error: error.message, authError: true }); 
           } else {
             set({ error: 'Failed to add book to shelf. Please try again.' });
           }
@@ -220,7 +220,7 @@ export const useBookshelfStore = create<BookshelfState>()(
       
       removeFromBookshelf: async (bookId: string, options?: { localLoadingOnly?: boolean }) => {
         if (!options?.localLoadingOnly) {
-          set({ loading: true, error: null, authError: false }); // Reset authError
+          set({ loading: true, error: null, authError: false });
         }
         
         try {
@@ -244,7 +244,7 @@ export const useBookshelfStore = create<BookshelfState>()(
         } catch (err) {
           console.error("Error removing from bookshelf:", err);
           if (err instanceof AuthError) {
-            set({ error: err.message, authError: true }); // Set authError flag
+            set({ error: err.message, authError: true }); 
           } else {
             set(state => ({ 
               error: err instanceof Error ? err.message : "Failed to remove from bookshelf",
@@ -261,7 +261,7 @@ export const useBookshelfStore = create<BookshelfState>()(
       
       toggleFavorite: async (bookId: string, options?: { localLoadingOnly?: boolean, bookData?: BookItem }) => {
         if (!options?.localLoadingOnly) {
-          set({ loading: true, error: null, authError: false }); // Reset authError
+          set({ loading: true, error: null, authError: false }); 
         }
         
         try {
@@ -289,7 +289,7 @@ export const useBookshelfStore = create<BookshelfState>()(
           get().updateLocalBookshelves(bookId, currentShelf, !isFav);
           
           if (err instanceof AuthError) {
-            set({ error: err.message, authError: true }); // Set authError flag
+            set({ error: err.message, authError: true }); 
           } else {
             set(state => ({ 
               error: "Failed to update favorites",
@@ -316,11 +316,11 @@ export const useBookshelfStore = create<BookshelfState>()(
       },
       
       clearError: () => {
-        set({ error: null, authError: false }); // Also clear authError here
+        set({ error: null, authError: false }); 
       },
       
       clearAuthError: () => {
-        set({ authError: false }); // Specific action to clear only auth error
+        set({ authError: false }); 
       },
       
       setInitialized: (value: boolean) => {
@@ -420,7 +420,7 @@ export const useBookshelfStore = create<BookshelfState>()(
           favoritesMap: {},
           loading: false,
           error: null,
-          authError: false, // Clear authError on full clear
+          authError: false, 
           lastUpdated: null,
           isInitialized: false,
           favorites: [],

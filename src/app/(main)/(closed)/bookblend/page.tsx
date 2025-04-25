@@ -112,7 +112,7 @@ export default function BookBlendPage() {
       <div className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-sans uppercase tracking-tight text-foreground">
-            BookBlend
+            Book Blend
           </h1>
           {showSelection && (
             <p className="text-sm text-muted-foreground mt-1 max-w-2xl font-sans">

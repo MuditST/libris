@@ -56,31 +56,43 @@ export default function RecommendationGrid() {
       <div className="space-y-10">
         {recommendations.map(
           (book: BookItem & { reason?: string }, index: number) => {
+          
             const safeBook = {
               ...book,
               volumeInfo: {
-                ...book.volumeInfo,
+                title: book.volumeInfo?.title || "Unknown Title", 
+                authors: book.volumeInfo?.authors || ["Unknown Author"],
                 description: book.volumeInfo?.description || "",
-                authors: book.volumeInfo?.authors || ["Unknown"],
+                imageLinks: book.volumeInfo?.imageLinks || null, 
+               
               },
             };
+
+         
+            const isPlaceholder = !safeBook.volumeInfo.imageLinks;
 
             return (
               <div
                 key={book.id || `rec-${index}`}
-                className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center p-4 border rounded-lg bg-card shadow-sm"
+              
+                className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 items-center p-4 border rounded-lg bg-card shadow-sm"
               >
-                {/* Column 1: Book Card */}
-                <div className="md:col-span-1">
+                {/* Column 1: Book Card - Adjust col-span for lg */}
+                <div className="md:col-span-1 lg:col-span-1">
                   <BookCard
                     book={safeBook}
-                    onClick={() => handleBookClick(safeBook)}
-                    hideCategoryBadge={false}
+                    onClick={
+                      isPlaceholder
+                        ? undefined
+                        : () => handleBookClick(safeBook)
+                    }
+                    className={isPlaceholder ? "cursor-default opacity-80" : ""}
+                    hideCategoryBadge={false} 
                   />
                 </div>
 
-                {/* Column 2: Reason */}
-                <div className="md:col-span-3 pt-2 md:pt-0">
+                {/* Column 2: Reason - Adjust col-span for lg */}
+                <div className="md:col-span-3 lg:col-span-4 pt-2 md:pt-0">
                   <h3 className="font-sans font-semibold text-foreground mb-2">
                     Why you might like this?
                   </h3>
@@ -93,7 +105,6 @@ export default function RecommendationGrid() {
           }
         )}
       </div>
-
       <AnimatePresence>
         {selectedBook && (
           <BookModal

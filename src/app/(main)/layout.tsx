@@ -1,6 +1,6 @@
 import BookshelfInitializer from "@/components/BookshelfInitializer";
 import { BookSidebar } from "@/components/Sidebar";
-import StoreCleanup from "@/components/StoreCleanup"; // Import the new component
+import StoreCleanup from "@/components/StoreCleanup";
 
 import {
   SidebarInset,
@@ -18,7 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <SidebarProvider>
       <BookshelfInitializer />
-      <StoreCleanup /> {/* Add the cleanup component here */}
+      <StoreCleanup /> 
       <BookSidebar />
       <SidebarInset>
         <div className="size-16 grid place-items-center">

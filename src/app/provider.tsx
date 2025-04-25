@@ -7,11 +7,11 @@ export function BookshelfInitializer() {
   const { isLoaded, isSignedIn } = useUser();
   
   useEffect(() => {
-    // If user is signed in, initialize their bookshelf data
+
     if (isLoaded && isSignedIn) {
-      // Delay slightly to prevent competing with more critical resources
+
       const timer = setTimeout(() => {
-        console.log("Pre-loading user bookshelf data...");
+      
         initBookshelfStore();
       }, 1000);
       
@@ -19,7 +19,7 @@ export function BookshelfInitializer() {
     }
   }, [isLoaded, isSignedIn]);
   
-  // This component doesn't render anything
+ 
   return null;
 }
 

@@ -31,7 +31,7 @@ export default function ChatModal({ book, isOpen, onClose }: ChatModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      const storedChat = localStorage.getItem(`gookit-chat-${book.id}`);
+      const storedChat = localStorage.getItem(`booktalk-chat-${book.id}`);
       if (storedChat) {
         setMessages(JSON.parse(storedChat) as Message[]);
       } else {
@@ -56,7 +56,10 @@ export default function ChatModal({ book, isOpen, onClose }: ChatModalProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
     if (messages.length > 0) {
-      localStorage.setItem(`gookit-chat-${book.id}`, JSON.stringify(messages));
+      localStorage.setItem(
+        `booktalk-chat-${book.id}`,
+        JSON.stringify(messages)
+      );
     }
   }, [messages, book.id]);
 
@@ -98,7 +101,7 @@ export default function ChatModal({ book, isOpen, onClose }: ChatModalProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/gookit", {
+      const response = await fetch("/api/booktalk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -155,7 +158,7 @@ export default function ChatModal({ book, isOpen, onClose }: ChatModalProps) {
 
   const clearChat = () => {
     if (window.confirm("Are you sure you want to clear this chat history?")) {
-      localStorage.removeItem(`gookit-chat-${book.id}`);
+      localStorage.removeItem(`booktalk-chat-${book.id}`);
       setMessages([
         {
           role: "assistant",

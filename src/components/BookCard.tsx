@@ -27,22 +27,6 @@ export default function BookCard({
     if (onClick) onClick(book);
   };
 
-  // Variants should map correctly to theme colors
-  const getShelfBadgeVariant = (
-    shelf: string | null | undefined
-  ): "default" | "secondary" | "outline" | "destructive" => {
-    switch (shelf) {
-      case "WILL_READ":
-        return "secondary"; // Uses border color
-      case "READING":
-        return "secondary"; // Uses secondary bg/fg
-      case "HAVE_READ":
-        return "secondary"; // Uses primary bg/fg
-      default:
-        return "secondary";
-    }
-  };
-
   const getShelfBadgeLabel = (shelf: string | null | undefined): string => {
     switch (shelf) {
       case "WILL_READ":
@@ -60,8 +44,8 @@ export default function BookCard({
     <Card
       className={cn(
         "cursor-pointer overflow-hidden flex flex-col h-full group relative",
-        "transition-all duration-200 ease-in-out border-border bg-card", // Ensure bg-card
-        "hover:shadow-lg hover:border-primary/50" // Enhanced hover effect
+        "transition-all duration-200 ease-in-out border-border bg-card", 
+        "hover:shadow-lg hover:border-primary/50" 
       )}
       onClick={handleClick}
     >
@@ -71,8 +55,8 @@ export default function BookCard({
           {/* Shelf badge - Increase size and weight */}
           {currentShelf && (
             <Badge
-              variant={getShelfBadgeVariant(currentShelf)}
-              // Use text-xs, increase padding/height, use font-semibold
+              variant="secondary"
+           
               className="text-xs rounded-md px-2 py-0.5 h-5 flex items-center text-secondary-foreground font-semibold"
             >
               {getShelfBadgeLabel(currentShelf)}
@@ -82,7 +66,7 @@ export default function BookCard({
           {favorite && (
             <Badge
               variant="destructive"
-              // Keep this small
+            
               className="rounded-sm w-5 h-5 p-0 flex items-center justify-center"
             >
               <Heart
@@ -97,7 +81,7 @@ export default function BookCard({
       {/* Image */}
       <CardContent className=" aspect-[4/5] flex items-center justify-center relative overflow-hidden bg-muted/30">
         {" "}
-        {/* Adjusted padding and bg */}
+       
         {book.volumeInfo.imageLinks?.thumbnail ? (
           <Image
             src={book.volumeInfo.imageLinks.thumbnail.replace(
@@ -112,9 +96,9 @@ export default function BookCard({
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-muted/50">
             {" "}
-            {/* Adjusted bg */}
+         
             <BookIcon size={48} className="text-muted-foreground/70" />{" "}
-            {/* Adjusted color */}
+         
           </div>
         )}
       </CardContent>
@@ -122,11 +106,11 @@ export default function BookCard({
       {/* Title and Author */}
       <CardFooter className="pt-2 pb-3 px-3 flex-grow flex flex-col items-center justify-center text-center">
         {" "}
-        {/* Adjusted padding */}
-        {/* Title - Use Merriweather (default sans) */}
+     
+        {/* Title  */}
         <h3 className="line-clamp-2 font-sans text-md font-medium text-foreground group-hover:text-primary transition-colors">
           {" "}
-          {/* Use foreground, hover primary */}
+    
           {book.volumeInfo.title}
         </h3>
         {/* Author - Use Roboto Mono */}

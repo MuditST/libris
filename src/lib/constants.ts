@@ -1,13 +1,13 @@
-// These are the exact shelf IDs from Google Books API
+
 export const SHELF_IDS = {
-    // Standard Google Books bookshelves
-    FAVORITES: 0,    // Favorites
-    PURCHASED: 1,    // Purchased
-    WILL_READ: 2,    // To Read
-    READING: 3,      // Currently Reading  
-    HAVE_READ: 4,    // Have Read
-    REVIEWED: 5,     // Reviewed
-    RECENTLY_VIEWED: 6, // Recently Viewed
-    ALL: 7,          // Books for you
-    ALL_BOOKS: 8,    // All books
+   
+    FAVORITES: 0,   
+    PURCHASED: 1,   
+    WILL_READ: 2,    
+    READING: 3,       
+    HAVE_READ: 4,    
+    REVIEWED: 5,     
+    RECENTLY_VIEWED: 6,
+    ALL: 7,         
+    ALL_BOOKS: 8,   
   } as const;

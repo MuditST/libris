@@ -2,9 +2,9 @@
 
 import { clerkClient, auth } from '@clerk/nextjs/server';
 import { BookItem } from '@/lib/types';
-import { trackApiCall } from '@/lib/throttleUtils';
+
 import { SHELF_IDS } from '@/lib/constants';
-import { AuthError } from '@/lib/errors'; // Import the error from its new location
+import { AuthError } from '@/lib/errors';
 
 type BookshelfCategory = keyof typeof SHELF_IDS;
 type ReadingShelfCategory = 'WILL_READ' | 'READING' | 'HAVE_READ';
@@ -29,7 +29,7 @@ export async function getGoogleOAuthToken(): Promise<string> {
 }
 
 export async function loggedFetch(url: string, options?: RequestInit): Promise<Response> {
-  trackApiCall();
+ 
   const response = await fetch(url, options);
 
   if (response.status === 401 || response.status === 403) {

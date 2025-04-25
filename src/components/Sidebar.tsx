@@ -38,7 +38,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-// Import the stores
+
 import { useBookshelfStore } from "@/store/bookshelfStore";
 import { useBookBlendStore } from "@/store/bookblendStore";
 
@@ -52,7 +52,6 @@ export function BookSidebar() {
     setOpenMobile(false);
   };
 
-  // Define the cleanup function
   const handleSignOutCleanup = () => {
     console.log("Performing cleanup via sign-out button click...");
 
@@ -61,10 +60,9 @@ export function BookSidebar() {
     useBookBlendStore.getState().clearSelectedBooks();
     useBookBlendStore.getState().clearRecommendations();
 
-    // Clear Gookit chat history from localStorage
     try {
       Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith("gookit-chat-")) {
+        if (key.startsWith("booktalk-chat-")) {
           localStorage.removeItem(key);
           console.log(`Removed chat history: ${key}`);
         }
@@ -80,9 +78,9 @@ export function BookSidebar() {
       <Sidebar className="font-sans ">
         <SidebarHeader className="flex h-16 justify-center p-6 bg-background">
           <div className="flex items-center justify-center space-x-2">
-            <Link href="/">
+            <Link href="/" prefetch={true}>
               <span className="text-3xl font-semibold font-sans tracking-tight text-sidebar-foreground cursor-pointer">
-                Gooks
+                Libris
               </span>
             </Link>
           </div>
@@ -99,7 +97,7 @@ export function BookSidebar() {
                     isActive={pathname === "/discover"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/discover">
+                    <Link href="/discover" prefetch={true}>
                       <Sparkles className="mr-2 h-4 w-4" />
                       <span className="font-sans">Discover</span>
                     </Link>
@@ -111,7 +109,7 @@ export function BookSidebar() {
                     isActive={pathname === "/search"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/search">
+                    <Link href="/search" prefetch={true}>
                       <Search className="mr-2 h-4 w-4" />
                       <span className="font-sans">Search</span>
                     </Link>
@@ -132,7 +130,7 @@ export function BookSidebar() {
                     isActive={pathname === "/bookshelf"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/bookshelf">
+                    <Link href="/bookshelf" prefetch={true}>
                       <Library className="mr-2 h-4 w-4" />
                       <span className="font-sans">My Library</span>
                     </Link>
@@ -144,7 +142,7 @@ export function BookSidebar() {
                     isActive={pathname === "/willread"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/willread">
+                    <Link href="/willread" prefetch={true}>
                       <Bookmark className="mr-2 h-4 w-4" />
                       <span className="font-sans">Want to Read</span>
                     </Link>
@@ -156,7 +154,7 @@ export function BookSidebar() {
                     isActive={pathname === "/reading"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/reading">
+                    <Link href="/reading" prefetch={true}>
                       <BookOpen className="mr-2 h-4 w-4" />
                       <span className="font-sans">Reading</span>
                     </Link>
@@ -168,7 +166,7 @@ export function BookSidebar() {
                     isActive={pathname === "/finished"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/finished">
+                    <Link href="/finished" prefetch={true}>
                       <BookCheck className="mr-2 h-4 w-4" />
                       <span className="font-sans">Finished</span>
                     </Link>
@@ -180,7 +178,7 @@ export function BookSidebar() {
                     isActive={pathname === "/favorites"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/favorites">
+                    <Link href="/favorites" prefetch={true}>
                       <Heart className="mr-2 h-4 w-4" />
                       <span className="font-sans">Favorites</span>
                     </Link>
@@ -198,12 +196,12 @@ export function BookSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === "/gookit"}
+                    isActive={pathname === "/booktalk"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/gookit">
+                    <Link href="/booktalk" prefetch={true}>
                       <Sparkles className="mr-2 h-4 w-4" />
-                      <span className="font-sans">Gook It!</span>
+                      <span className="font-sans">Book Talk!</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -213,9 +211,9 @@ export function BookSidebar() {
                     isActive={pathname === "/bookblend"}
                     onClick={handleLinkClick}
                   >
-                    <Link href="/bookblend">
+                    <Link href="/bookblend" prefetch={true}>
                       <Blend className="mr-2 h-4 w-4" />
-                      <span className="font-sans">BookBlend</span>
+                      <span className="font-sans">Book Blend</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

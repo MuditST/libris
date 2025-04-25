@@ -112,7 +112,7 @@ const DiscoverPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Filter controls - Updated to 3 columns for desktop */}
+     
       <div className="mb-8 flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/3">
           <label className="block mb-2 text-sm uppercase">Subject</label>
@@ -212,16 +212,16 @@ const DiscoverPage = () => {
       {books.length > 0 && (
         <div className="flex justify-center mt-12 mb-8">
           <Button
-            variant="outline" // Use outline variant
+            variant="outline" 
             onClick={handleLoadMore}
             disabled={loadingMore || !hasMore}
-            // Apply theme colors
+    
             className={cn(
-              "px-8 py-3 uppercase tracking-wide font-sans", // Use font-sans
-              "border-primary text-primary", // Theme border/text
-              "hover:bg-primary hover:text-primary-foreground", // Theme hover
-              "disabled:opacity-50 disabled:cursor-not-allowed", // Disabled state
-              loadingMore && "cursor-not-allowed" // Explicit loading cursor
+              "px-8 py-3 uppercase tracking-wide font-sans", 
+              "border-primary text-primary", 
+              "hover:bg-primary hover:text-primary-foreground",
+              "disabled:opacity-50 disabled:cursor-not-allowed",
+              loadingMore && "cursor-not-allowed"
             )}
           >
             {loadingMore ? (

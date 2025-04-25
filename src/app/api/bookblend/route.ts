@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { z } from 'zod';
 
-// Schema validation for the request body
+
 const requestSchema = z.object({
   books: z.array(
     z.object({
@@ -18,14 +18,14 @@ const requestSchema = z.object({
 });
 
 export async function POST(req: Request) {
+ 
   try {
-    // Verify user is authenticated
+  
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if OpenRouter API key is configured
     const openRouterKey = process.env.OPENROUTER_API_KEY;
     if (!openRouterKey) {
       console.error("OpenRouter API key not configured");
@@ -36,8 +36,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    
-    // Validate the request body
+   
     const result = requestSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
@@ -48,7 +47,6 @@ export async function POST(req: Request) {
     
     const { books } = result.data;
     
-    // Format the selected books for the AI prompt
     const formattedBooks = books.map((book, i) => {
       const authors = book.volumeInfo.authors?.join(', ') || 'Unknown';
       const description = book.volumeInfo.description?.substring(0, 150) || 'No description available';
@@ -57,8 +55,8 @@ export async function POST(req: Request) {
       return `${i+1}. "${book.volumeInfo.title}" by ${authors} - ${description}... - Genres: ${categories}`;
     }).join('\n\n');
 
-    // Create the AI prompt - Updated for deeper reasoning based on the blend
-    const prompt = `You are a helpful and insightful AI librarian working for the Gooks app. A user has selected the following books they enjoy, representing their current reading "vibe":
+   
+    const prompt = `You are a helpful and insightful AI librarian. A user has selected the following books they enjoy, representing their current reading "vibe":
 
 Selected books:
 ${formattedBooks}
@@ -89,17 +87,17 @@ Provide recommendations in the following JSON format:
 Ensure book titles and author names are spelled correctly for database lookups.`;
 
     try {
-      // Use OpenRouter.ai to access Gemini Pro
+      
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${openRouterKey}`,
-          "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://gooks.app",
-          "X-Title": "Gooks BookBlend",
+          "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL,
+          "X-Title": "Libris BookBlend",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "model": "google/gemini-2.0-flash-001", // Using Gemini Pro via OpenRouter
+          "model": "google/gemini-2.0-flash-001", 
           "messages": [
             {
               "role": "user",
@@ -124,24 +122,22 @@ Ensure book titles and author names are spelled correctly for database lookups.`
       
       const aiResponse = openRouterData.choices[0].message.content;
       
-      // Parse the response as JSON
+    
       if (!aiResponse) {
         throw new Error('Empty response from AI');
       }
-      
-      // Try to parse the JSON response
+     
       let recommendations;
       try {
         recommendations = JSON.parse(aiResponse);
       } catch (jsonError) {
-        // If direct parsing fails, try to extract JSON from text
+      
         const jsonRegex = /```json\s*(\{[\s\S]*?\})\s*```|(\{[\s\S]*?\})/;
         const jsonMatch = aiResponse.match(jsonRegex);
         if (!jsonMatch) {
           throw new Error('Invalid JSON response format');
         }
         
-        // Use the content of the code block if it exists, otherwise use the full match
         const jsonStr = (jsonMatch[1] || jsonMatch[2] || jsonMatch[0]).replace(/```json|```/g, '').trim();
         recommendations = JSON.parse(jsonStr);
       }
@@ -150,24 +146,33 @@ Ensure book titles and author names are spelled correctly for database lookups.`
         throw new Error('Invalid response format from AI');
       }
       
-      // Now find images for the books from Google Books API
       const recommendationsWithCovers = await Promise.all(
         recommendations.recommendations.map(async (rec: any) => {
           try {
-            // Search for the book via Google Books API to get cover images
-            const searchQuery = encodeURIComponent(`intitle:"${rec.title}" inauthor:"${rec.author}"`);
-            const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=1`);
+            const generalQuery = encodeURIComponent(`${rec.title} ${rec.author}`);
+            const googleBooksUrl = `https://www.googleapis.com/books/v1/volumes?q=${generalQuery}&maxResults=1&key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+
+            const response = await fetch(googleBooksUrl);
+
+            if (!response.ok) {
+                 
+                 console.error(`[Blend] Google Books API fetch failed for "${rec.title}": ${response.status} ${response.statusText}`);
+                 throw new Error(`Google Books API fetch failed: ${response.status}`);
+            }
+
             const data = await response.json();
-            
+
             if (data.items && data.items.length > 0) {
-              // Get the first matching book and mix in our reason
               return {
                 ...data.items[0],
                 reason: rec.reason
               };
+            } else {
+              
+               console.log(` No items found in Google Books for general query: ${generalQuery}`);
             }
-            
-            // If no image found, return basic book data
+
+            // If no items found, return basic book data (Placeholder)
             return {
               id: `rec-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
               volumeInfo: {
@@ -179,8 +184,7 @@ Ensure book titles and author names are spelled correctly for database lookups.`
               reason: rec.reason
             };
           } catch (error) {
-            console.error('Error fetching book data:', error);
-            // Return basic book data if there's an error
+            console.error(`[Blend] Error processing recommendation "${rec.title}":`, error);
             return {
               id: `rec-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
               volumeInfo: {
@@ -194,11 +198,11 @@ Ensure book titles and author names are spelled correctly for database lookups.`
           }
         })
       );
-      
-      return NextResponse.json({ 
-        recommendations: recommendationsWithCovers 
+
+      return NextResponse.json({
+        recommendations: recommendationsWithCovers
       });
-      
+
     } catch (aiError) {
       console.error('AI API error:', aiError);
       return NextResponse.json(

@@ -12,21 +12,18 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-// New component to contain logic depending on searchParams
 function SearchContent() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // useSearchParams is now inside this component
+  const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const [selectedBook, setSelectedBook] = useState<BookItem | null>(null);
 
-  // Create search hook
   const { books, loading, loadMore, loadingMore, hasMore, error } =
     useSearchBooks(debouncedQuery);
 
-  // Fixed debounce handling in the search page
   useEffect(() => {
     const timer = setTimeout(() => {
       if (debouncedQuery !== query.trim()) {
@@ -44,13 +41,11 @@ function SearchContent() {
     return () => clearTimeout(timer);
   }, [query, router, initialQuery, debouncedQuery]);
 
-  // Book selection
   const handleBookClick = (book: BookItem) => {
     setSelectedBook(book);
     window.history.pushState(null, "", `/book/${book.id}`);
   };
 
-  // Update handleCloseModal to focus back on the search input
   const handleCloseModal = useCallback(() => {
     setSelectedBook(null);
     const queryParam = query ? `?q=${encodeURIComponent(query)}` : "";
@@ -89,7 +84,6 @@ function SearchContent() {
     }
   };
 
-  // Update the input handling
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
@@ -246,7 +240,6 @@ function SearchContent() {
   );
 }
 
-// The main page component now wraps SearchContent in Suspense
 const SearchPage = () => {
   return (
     <div className="container mx-auto p-4">
