@@ -39,7 +39,7 @@ To run Libris locally, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/libris.git
+   git clone https://github.com/MuditST/libris.git
    cd libris
    ```
 
