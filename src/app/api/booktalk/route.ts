@@ -101,7 +101,7 @@ export async function POST(req: Request) {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${openRouterKey}`,
-            "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL,
+            "HTTP-Referer": "HTTP-Referer": "https://libris.vercel.app",
             "X-Title": "Libris - Book Talk!",
             "Content-Type": "application/json"
           },

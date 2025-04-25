@@ -92,7 +92,7 @@ Ensure book titles and author names are spelled correctly for database lookups.`
         method: "POST",
         headers: {
           "Authorization": `Bearer ${openRouterKey}`,
-          "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL,
+          "HTTP-Referer": "https://libris.vercel.app",
           "X-Title": "Libris BookBlend",
           "Content-Type": "application/json"
         },
