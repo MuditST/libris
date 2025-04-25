@@ -56,25 +56,24 @@ export default function RecommendationGrid() {
       <div className="space-y-10">
         {recommendations.map(
           (book: BookItem & { reason?: string }, index: number) => {
-          
-            const safeBook = {
-              ...book,
-              volumeInfo: {
-                title: book.volumeInfo?.title || "Unknown Title", 
-                authors: book.volumeInfo?.authors || ["Unknown Author"],
-                description: book.volumeInfo?.description || "",
-                imageLinks: book.volumeInfo?.imageLinks || null, 
-               
-              },
+            const safeVolumeInfo = {
+              title: book.volumeInfo?.title || "Unknown Title",
+              authors: book.volumeInfo?.authors || ["Unknown Author"],
+              description: book.volumeInfo?.description || "",
+
+              imageLinks: book.volumeInfo?.imageLinks || undefined,
             };
 
-         
+            const safeBook: BookItem & { reason?: string } = {
+              ...book,
+              volumeInfo: safeVolumeInfo,
+            };
+
             const isPlaceholder = !safeBook.volumeInfo.imageLinks;
 
             return (
               <div
                 key={book.id || `rec-${index}`}
-              
                 className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6 items-center p-4 border rounded-lg bg-card shadow-sm"
               >
                 {/* Column 1: Book Card - Adjust col-span for lg */}
@@ -87,7 +86,7 @@ export default function RecommendationGrid() {
                         : () => handleBookClick(safeBook)
                     }
                     className={isPlaceholder ? "cursor-default opacity-80" : ""}
-                    hideCategoryBadge={false} 
+                    hideCategoryBadge={false}
                   />
                 </div>
 
