@@ -74,3 +74,52 @@ To run Libris locally, follow these steps:
    ```
 
 5. Open the app in your browser at `http://localhost:3000`.
+
+
+
+## Privacy Policy
+
+Libris is committed to protecting your privacy. This privacy policy outlines how we collect, use, and protect your personal information.
+
+### **Data Collection**
+- **Google OAuth Token:** To use the app, users are required to authenticate via Google OAuth. This allows Libris to access and manage your bookshelf information on Google Books.
+- **Personal Information:** When you log in, we store your authentication details to sync and manage your bookshelf across devices. We do not share or sell your personal information.
+
+### **How We Use Your Data**
+- **Bookshelf Management:** We use your Google OAuth token to fetch, update, and manage your bookshelves in Google Books, enabling you to organize your personal collection.
+- **AI Features:** The Book Talk and Book Blend features utilize your book data for generating personalized recommendations, providing a customized experience.
+
+### **Data Protection**
+- All personal information and OAuth tokens are securely stored and handled. We take reasonable measures to protect your data from unauthorized access or disclosure.
+
+### **Data Retention**
+- Your data will be retained only as long as you use Libris. If you choose to delete your account, all related data will be removed from our system, except for any data retained by Google Books through their own policies.
+
+By using Libris, you agree to the collection and use of your data as described in this policy.
+
+## Terms of Service
+
+By accessing or using the Libris application, you agree to be bound by the following Terms of Service:
+
+### **1. Account Creation and Authentication**
+- You may need to create an account using your Google credentials. You will provide your Google OAuth token for bookshelf management within the app.
+- You agree to the storage of your Google OAuth token and acknowledge that we will use it to interact with Google Books on your behalf for managing your bookshelf.
+
+### **2. Bookshelf Management**
+- You are responsible for managing your bookshelf. Libris will access your bookshelf on Google Books, add, update, and organize your books based on your interactions with the app.
+
+### **3. Use of AI Features**
+- The Book Talk and Book Blend features require access to your book data for generating personalized recommendations and insights. By using these features, you consent to our use of your book data for AI processing.
+
+### **4. Data Security**
+- While we make efforts to protect your data, we cannot guarantee the security of data transmitted over the internet. You are responsible for keeping your account credentials safe and notifying us of any suspicious activity.
+
+### **5. Limitation of Liability**
+- Libris is provided "as-is" without any warranties. We are not liable for any damages resulting from the use or inability to use the app, including but not limited to data loss, disruptions, or unauthorized access to your account.
+
+### **6. Termination**
+- We reserve the right to suspend or terminate your access to Libris at our discretion, including if you violate these Terms of Service.
+
+### **7. Changes to Terms**
+- We may update or change these Terms of Service at any time. All changes will be reflected here, and continued use of the app signifies your agreement to the updated terms.
+
