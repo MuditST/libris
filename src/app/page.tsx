@@ -43,7 +43,7 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="mx-auto container">
+    <main className="mx-auto container px-8">
       <div className="flex min-h-screen flex-col bg-background">
         <header
           className={`sticky top-0 z-50 w-full  transition-all duration-200 ${
@@ -137,8 +137,8 @@ export default function LandingPage() {
                     </Button>
                   </div>
                 </div>
-                {/* Visuals - Use square aspect ratio */}
-                <div className="relative w-full aspect-square rounded-2xl overflow-hidden border shadow-inner group">
+
+                <div className="relative w-full md:w-11/12 lg:w-10/12 mx-auto aspect-square rounded-2xl overflow-hidden border shadow-inner group">
                   <Image
                     src="/TheCozyReader.png"
                     alt="Illustration of a person reading comfortably in a cozy setting"
@@ -154,7 +154,7 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Section 2 (Features) - Simplified Cards */}
+          {/* Section 2 (Features) */}
           <section id="features" className="py-20 md:py-28 bg-background">
             <div className="container px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-16">
