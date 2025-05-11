@@ -358,9 +358,27 @@ export default function LandingPage() {
 
         <footer className="py-8 border-t border-border/40 bg-background">
           {/* Container centers the footer content */}
-          <div className="container px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground font-sans">
-            © {new Date().getFullYear()} Libris. All rights reserved. Built with
-            passion.
+          <div className="container px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-sm text-muted-foreground font-sans">
+                © {new Date().getFullYear()} Libris. All rights reserved. Built
+                with passion.
+              </p>
+              <div className="flex items-center gap-6">
+                <Link
+                  href="/privacy"
+                  className="text-sm text-muted-foreground hover:text-foreground hover:underline transition-colors duration-200"
+                >
+                  Privacy Policy
+                </Link>
+                <Link
+                  href="/terms"
+                  className="text-sm text-muted-foreground hover:text-foreground hover:underline transition-colors duration-200"
+                >
+                  Terms of Service
+                </Link>
+              </div>
+            </div>
           </div>
         </footer>
       </div>
