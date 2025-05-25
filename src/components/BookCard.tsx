@@ -6,7 +6,7 @@ import { BookIcon, Heart } from "lucide-react";
 import { useBookshelfStore } from "@/store/bookshelfStore";
 import { Badge } from "@/components/ui/badge";
 
-// Helper function for shelf labels (keep it or import if moved)
+
 const getShelfBadgeLabel = (shelf: string | null | undefined): string => {
   switch (shelf) {
     case "WILL_READ":
@@ -24,14 +24,14 @@ interface BookCardProps {
   book: BookItem;
   onClick?: (book: BookItem) => void;
   hideCategoryBadge?: boolean;
-  className?: string; // <-- Add className prop here
+  className?: string; 
 }
 
 export default function BookCard({
   book,
   onClick,
   hideCategoryBadge = false,
-  className, // <-- Destructure className here
+  className,
 }: BookCardProps) {
   const { isOnShelf, isFavorite } = useBookshelfStore();
   const currentShelf =
@@ -46,11 +46,11 @@ export default function BookCard({
   return (
     <Card
       className={cn(
-        // <-- Use cn() to merge classes
+        
         "cursor-pointer overflow-hidden flex flex-col h-full group relative",
         "transition-all duration-200 ease-in-out border-border bg-card",
         "hover:shadow-lg hover:border-primary/50",
-        className // <-- Apply the passed className
+        className 
       )}
       onClick={handleClick}
     >
