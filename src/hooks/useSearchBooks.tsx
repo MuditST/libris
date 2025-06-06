@@ -45,9 +45,6 @@ export function useSearchBooks(
   useEffect(() => {
     // Only proceed if we have a new query
     if (initialQuery !== latestQueryRef.current) {
-      console.log(
-        `Query changed from "${latestQueryRef.current}" to "${initialQuery}"`
-      );
       latestQueryRef.current = initialQuery;
       setQuery(initialQuery);
 
@@ -93,7 +90,6 @@ export function useSearchBooks(
 
       // Only update if this is the current query we care about
       if (queryToSearch !== latestQueryRef.current) {
-        console.log(`Ignoring stale search for "${queryToSearch}"`);
         return;
       }
 
@@ -103,8 +99,6 @@ export function useSearchBooks(
         searchResultsCache[cacheKey] &&
         now - searchResultsCache[cacheKey].timestamp < CACHE_DURATION
       ) {
-        console.log(`Using cached search results for "${queryToSearch}"`);
-
         const cachedData = searchResultsCache[cacheKey].data;
 
         if (reset) {
@@ -131,9 +125,6 @@ export function useSearchBooks(
         return;
       }
 
-      // If no valid cache, make the API call
-      console.log(`Starting search for: "${queryToSearch}"`);
-
       const data = await searchBooksServer(
         queryToSearch,
         reset ? 0 : startIndex,
@@ -143,8 +134,6 @@ export function useSearchBooks(
 
       // Only update state and cache if this is still the query we care about
       if (queryToSearch === latestQueryRef.current) {
-        console.log(`Received results for: "${queryToSearch}"`);
-
         // Cache the response
         searchResultsCache[cacheKey] = {
           timestamp: now,
@@ -170,14 +159,8 @@ export function useSearchBooks(
         } else {
           setStartIndex(maxResults);
         }
-      } else {
-        console.log(
-          `Ignoring stale results for "${queryToSearch}", current query is "${latestQueryRef.current}"`
-        );
       }
     } catch (err) {
-      console.error(`Error searching books for "${queryToSearch}":`, err);
-
       if (queryToSearch === latestQueryRef.current) {
         setError("Failed to search books. Please try again.");
       }

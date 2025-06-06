@@ -38,7 +38,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-
 import { useBookshelfStore } from "@/store/bookshelfStore";
 import { useBookBlendStore } from "@/store/bookblendStore";
 
@@ -53,8 +52,6 @@ export function BookSidebar() {
   };
 
   const handleSignOutCleanup = () => {
-    console.log("Performing cleanup via sign-out button click...");
-
     // Clear Zustand stores
     useBookshelfStore.getState().clearStore();
     useBookBlendStore.getState().clearSelectedBooks();
@@ -70,7 +67,6 @@ export function BookSidebar() {
     } catch (error) {
       console.error("Error clearing chat history from localStorage:", error);
     }
-    console.log("Cleanup complete.");
   };
 
   return (

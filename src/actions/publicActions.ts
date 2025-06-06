@@ -130,7 +130,6 @@ export async function discoverBooks(
       : `&orderBy=relevance`;
 
     // Log what we're fetching for debugging
-    console.log(`Fetching with query:${queryString}, orderBy:${orderBy}, printType:${printType}, startIndex:${startIndex}, maxResults:${maxResults}`);
     
     const response = await fetch(
       `https://www.googleapis.com/books/v1/volumes?` +

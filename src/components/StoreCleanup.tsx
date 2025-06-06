@@ -15,8 +15,6 @@ export default function StoreCleanup() {
     }
 
     if (wasSignedIn.current === true && isSignedIn === false) {
-      console.log("User signed out, clearing stores and chat history...");
-
       // Clear Zustand stores
       useBookshelfStore.getState().clearStore();
       useBookBlendStore.getState().clearSelectedBooks();
@@ -26,7 +24,6 @@ export default function StoreCleanup() {
         Object.keys(localStorage).forEach((key) => {
           if (key.startsWith("booktalk-chat-")) {
             localStorage.removeItem(key);
-            console.log(`Removed chat history: ${key}`);
           }
         });
       } catch (error) {

@@ -167,10 +167,7 @@ Ensure book titles and author names are spelled correctly for database lookups.`
                 ...data.items[0],
                 reason: rec.reason
               };
-            } else {
-              
-               console.log(` No items found in Google Books for general query: ${generalQuery}`);
-            }
+            } 
 
             // If no items found, return basic book data (Placeholder)
             return {

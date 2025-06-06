@@ -228,7 +228,6 @@ export const useBookshelfStore = create<BookshelfState>()(
           const isFav = get().isFavorite(bookId);
           
           if (!currentShelf) {
-            console.log("Book is not on any shelf, nothing to remove");
             if (!options?.localLoadingOnly) {
               set({ loading: false });
             }

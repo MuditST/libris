@@ -82,8 +82,6 @@ export function useDiscoverBooks(
         discoverCache[cacheKey] &&
         now - discoverCache[cacheKey].timestamp < CACHE_DURATION
       ) {
-        console.log(`Using cached discover results for ${cacheKey}`);
-
         const cachedData = discoverCache[cacheKey].data;
 
         if (reset) {
@@ -148,7 +146,6 @@ export function useDiscoverBooks(
         setStartIndex(maxResults);
       }
     } catch (err) {
-      console.error("Error loading books:", err);
       setError(
         reset
           ? "Failed to load books. Please try again later."
@@ -199,17 +196,11 @@ export function useDiscoverBooks(
 
   // Update useDiscoverBooks.tsx - Fix the book updating logic
   useEffect(() => {
-    console.log("Setting up discover books store subscription");
-
     const unsubscribe = useBookshelfStore.subscribe((state) => {
-      console.log("Bookshelf store updated, updating discover books");
-
       // This runs whenever bookshelf state changes
       setBooks((currentBooks) => {
         // Skip if no books
         if (!currentBooks || currentBooks.length === 0) return currentBooks;
-
-        console.log("Updating categories for", currentBooks.length, "books");
 
         // Create a completely new array with updated shelf info
         const updatedBooks = currentBooks.map((book) => {
@@ -223,17 +214,6 @@ export function useDiscoverBooks(
             _favorite: isFavorite,
           };
         });
-
-        // Debug log of a few updated books
-        console.log(
-          "Sample updated books:",
-          updatedBooks.slice(0, 3).map((b) => ({
-            id: b.id,
-            title: b.volumeInfo?.title,
-            shelf: b._shelf,
-            fav: b._favorite,
-          }))
-        );
 
         // Force re-render by returning a new array - important!
         return [...updatedBooks];

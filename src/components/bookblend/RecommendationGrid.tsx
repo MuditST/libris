@@ -28,7 +28,6 @@ export default function RecommendationGrid() {
 
   const handleCloseModal = useCallback(() => {
     if (useBookshelfStore.getState().loading) {
-      console.log("Bookshelf store is loading, preventing modal close.");
       return;
     }
 

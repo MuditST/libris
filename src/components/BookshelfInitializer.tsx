@@ -10,7 +10,6 @@ export default function BookshelfInitializer() {
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       const timer = setTimeout(() => {
-        console.log("Initializing bookshelf store...");
         initBookshelfStore();
       }, 500);
 

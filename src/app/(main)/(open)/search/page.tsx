@@ -27,7 +27,7 @@ function SearchContent() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (debouncedQuery !== query.trim()) {
-        console.log(`Debouncing from "${debouncedQuery}" to "${query.trim()}"`);
+        
         setDebouncedQuery(query.trim());
         if (query.trim()) {
           router.push(`/search?q=${encodeURIComponent(query.trim())}`, {

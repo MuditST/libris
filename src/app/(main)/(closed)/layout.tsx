@@ -16,7 +16,6 @@ export default function ClosedLayout({
 
   useEffect(() => {
     if (authError) {
-      console.log("Authentication error detected in layout, signing out.");
 
       clearAuthError();
       signOut({ redirectUrl: "/sign-in?reason=google_reauth" });
